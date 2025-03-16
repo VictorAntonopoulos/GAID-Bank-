@@ -56,5 +56,11 @@ public class AccountController {
         service.transfer(dto);
         return ResponseEntity.ok("Transferência PIX realizada com sucesso!");
     }
+    @PutMapping("/close/{accountId}")
+public ResponseEntity<String> closeAccount(@PathVariable Long accountId) {
+    service.closeAccount(accountId);
+    return ResponseEntity.ok("Conta encerrada com sucesso!");
+}
+
     
 }

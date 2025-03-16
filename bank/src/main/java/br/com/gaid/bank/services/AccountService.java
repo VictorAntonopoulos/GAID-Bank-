@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class AccountService {
     private final AccountRepository repository;
@@ -54,6 +55,19 @@ public class AccountService {
         account.setBalance(account.getBalance() - dto.getAmount());
         repository.save(account);
     }
+    @Transactional
+public void closeAccount(Long accountId) {
+    Account account = repository.findById(accountId)
+        .orElseThrow(() -> new RuntimeException("Conta com ID " + accountId + " não encontrada!"));
+
+    if (!account.getActive()) {
+        throw new RuntimeException("A conta já está encerrada!");
+    }
+
+    account.setActive(false); // Marca como inativa
+    repository.save(account);
+}
+
 
     @Transactional
     public void transfer(PixDTO dto) {

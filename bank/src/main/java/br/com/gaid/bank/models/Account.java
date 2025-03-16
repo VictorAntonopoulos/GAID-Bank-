@@ -22,5 +22,6 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
-    private boolean active;
+    private Boolean active = true;
+ 
 }
