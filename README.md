@@ -44,7 +44,7 @@ Antes de iniciar, certifique-se de ter instalado:
 ```json
 {
   "project": "GAID Bank API",
-  "author": "Seu Nome"
+  "author": "Victor Martins Antonopoulos"
 }
 ```
 
