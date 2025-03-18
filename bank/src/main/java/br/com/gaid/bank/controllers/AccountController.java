@@ -4,6 +4,7 @@ import br.com.gaid.bank.dtos.PixDTO;
 import br.com.gaid.bank.dtos.WithdrawDepositDTO;
 import br.com.gaid.bank.models.Account;
 import br.com.gaid.bank.services.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody Account account) {
         return ResponseEntity.ok(service.createAccount(account));
     }
 
@@ -56,11 +57,10 @@ public class AccountController {
         service.transfer(dto);
         return ResponseEntity.ok("Transferência PIX realizada com sucesso!");
     }
-    @PutMapping("/close/{accountId}")
-public ResponseEntity<String> closeAccount(@PathVariable Long accountId) {
-    service.closeAccount(accountId);
-    return ResponseEntity.ok("Conta encerrada com sucesso!");
-}
 
-    
+    @PutMapping("/close/{accountId}")
+    public ResponseEntity<String> closeAccount(@PathVariable Long accountId) {
+        service.closeAccount(accountId);
+        return ResponseEntity.ok("Conta encerrada com sucesso!");
+    }
 }

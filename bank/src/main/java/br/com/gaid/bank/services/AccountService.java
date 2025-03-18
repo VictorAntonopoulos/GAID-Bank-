@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class AccountService {
     private final AccountRepository repository;
@@ -37,46 +36,51 @@ public class AccountService {
 
     @Transactional
     public void deposit(WithdrawDepositDTO dto) {
-        Account account = repository.findById(dto.getAccountId()).orElseThrow(
-                () -> new RuntimeException("Conta não encontrada!")
-        );
+        Account account = repository.findById(dto.getAccountId())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+
         account.setBalance(account.getBalance() + dto.getAmount());
         repository.save(account);
     }
 
     @Transactional
     public void withdraw(WithdrawDepositDTO dto) {
-        Account account = repository.findById(dto.getAccountId()).orElseThrow(
-                () -> new RuntimeException("Conta não encontrada!")
-        );
+        Account account = repository.findById(dto.getAccountId())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada!"));
+
         if (account.getBalance() < dto.getAmount()) {
             throw new RuntimeException("Saldo insuficiente!");
         }
+
         account.setBalance(account.getBalance() - dto.getAmount());
         repository.save(account);
     }
+
     @Transactional
-public void closeAccount(Long accountId) {
-    Account account = repository.findById(accountId)
-        .orElseThrow(() -> new RuntimeException("Conta com ID " + accountId + " não encontrada!"));
+    public void closeAccount(Long accountId) {
+        Account account = repository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Conta com ID " + accountId + " não encontrada!"));
 
-    if (!account.getActive()) {
-        throw new RuntimeException("A conta já está encerrada!");
+                if (!account.isActive()) {
+                    throw new RuntimeException("A conta já está encerrada!");
+                }
+                
+
+        account.setActive(false); // Marca como inativa
+        repository.save(account);
     }
-
-    account.setActive(false); // Marca como inativa
-    repository.save(account);
-}
-
 
     @Transactional
     public void transfer(PixDTO dto) {
-        Account sender = repository.findById(dto.getAccountId()).orElseThrow(
-                () -> new RuntimeException("Conta de origem não encontrada!")
-        );
-        Account receiver = repository.findById(dto.getPixAccountId()).orElseThrow(
-                () -> new RuntimeException("Conta de destino não encontrada!")
-        );
+        Account sender = repository.findById(dto.getAccountId())
+                .orElseThrow(() -> new RuntimeException("Conta de origem não encontrada!"));
+
+        Account receiver = repository.findById(dto.getPixAccountId())
+                .orElseThrow(() -> new RuntimeException("Conta de destino não encontrada!"));
+
+        if (!sender.isActive() || !receiver.isActive()) {
+            throw new RuntimeException("Ambas as contas precisam estar ativas para realizar a transferência!");
+        }
 
         if (sender.getBalance() < dto.getAmount()) {
             throw new RuntimeException("Saldo insuficiente para transferência!");
@@ -88,5 +92,4 @@ public void closeAccount(Long accountId) {
         repository.save(sender);
         repository.save(receiver);
     }
-    
 }
